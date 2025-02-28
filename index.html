@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+ <style>
+  /* Global Styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  background-image: url(../images/banner-bg.png);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* Container Styles */
+.container {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 350px;
+}
+
+/* Hidden Class */
+.hidden {
+  display: none;
+}
+
+/* Form Styles */
+form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+}
+
+input {
+  margin: 8px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+button {
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  padding: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  border-radius: 5px;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Dashboard Header */
+h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-top: 20px;
+}
+
+/* Update Profile Form */
+#update-form {
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+}
+
+#logout-btn {
+  background-color: #dc3545;
+}
+
+#logout-btn:hover {
+  background-color: #c82333;
+}
+
+ </style>
+</head>
+<body>
+
+  <div id="login-container" class="container">
+    <h1>Login</h1>
+    <form id="login-form">
+      <input type="email" id="login-email" placeholder="Enter your email" required>
+      <input type="password" id="login-password" placeholder="Enter your password" required>
+      <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a href="register.html">Register here</a></p>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const loginForm = document.getElementById('login-form');
+
+        loginForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById('login-email').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+
+            fetch('http://localhost:5000/loginUser', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === "success") {
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = 'dashboard.html'; // ✅ Redirect to dashboard
+                } else {
+                    alert(data.message); // Show error message if login fails
+                }
+            })
+            .catch(error => {
+                console.error('❌ Login Error:', error);
+                alert('❌ Login failed. Try again.');
+            });
+        });
+    });
+</script>
+
+
+</body>
+</html>
