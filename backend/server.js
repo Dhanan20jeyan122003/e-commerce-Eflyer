@@ -6,6 +6,7 @@ const cors = require('cors');
 const app = express();
 app.use(express.json());
 app.use(cors({ origin: "*" }));
+const path = require('path');
 
 const mongoUri = process.env.MONGO_URI;
 
@@ -78,7 +79,6 @@ app.listen(5000, () => {
 });
 
 // ✅ Serve frontend
-app.use(express.static("frontend"));
-app.get("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "frontend", "index.html"));
-});
+app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'index.html'));  // Directly reference the index.html in the root directory
+  });
