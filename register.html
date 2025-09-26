@@ -75,12 +75,13 @@
           })
 
         .then(response => response.json())
-        .then(data => {
-            alert(data.message); // ✅ Show success or error message
-            if (data.message.includes("successful")) { 
+                .then(data => {
+            alert(data.message); // Show success or error
+            if (data.message === "success") { 
                 window.location.href = 'index.html'; // Redirect after successful registration
             }
         })
+
         .catch(error => {
             console.error('❌ Registration Error:', error);
             alert('❌ Registration failed. Please try again.');
