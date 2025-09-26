@@ -74,15 +74,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const email = document.getElementById('login-email').value.trim();
     const password = document.getElementById('login-password').value.trim();
 
-    // ✅ Use relative URL
-    fetch('/loginUser', {
+    // ✅ Use full backend URL
+    fetch('https://e-commerce-eflyer-1.onrender.com/loginUser', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password })
     })
     .then(response => response.json())
     .then(data => {
-      if (data.message.includes("successful")) {
+      if (data.message === "success") {
         localStorage.setItem('user', JSON.stringify(data.user));
         window.location.href = 'dashboard.html';
       } else {
