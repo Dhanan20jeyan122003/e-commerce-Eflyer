@@ -82,10 +82,11 @@ app.listen(PORT, () => {
 
 
 
-app.use(express.static(path.join(__dirname, 'frontend')));
+// Serve all frontend files outside the backend folder
+app.use(express.static(path.join(__dirname, '../')));
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+  res.sendFile(path.join(__dirname, '../index.html'));
 });
 
 
