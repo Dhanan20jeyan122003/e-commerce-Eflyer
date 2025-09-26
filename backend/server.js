@@ -80,7 +80,9 @@ app.listen(PORT, () => {
 });
 
 
-// ✅ Serve frontend
+app.use(express.static(path.join(__dirname, 'frontend')));
+
 app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../index.html'));  // Directly reference the index.html in the root directory
-  });
+    res.sendFile(path.join(__dirname, 'frontend', 'index.html'));
+});
+
