@@ -68,11 +68,12 @@
         const email = document.getElementById('register-email').value.trim();
         const password = document.getElementById('register-password').value.trim();
 
-        fetch('https://e-commerce-eflyer.onrender.com/addUser', {  // ✅ FIXED API ENDPOINT
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name, email, password })
-        })
+                  fetch('https://e-commerce-eflyer-1.onrender.com/addUser', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ name, email, password })
+          })
+
         .then(response => response.json())
         .then(data => {
             alert(data.message); // ✅ Show success or error message
