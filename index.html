@@ -114,12 +114,11 @@ h2 {
             const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value.trim();
 
-                            fetch('https://e-commerce-eflyer.onrender.com/loginUser', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ email, password })
-                })
-
+                          fetch('https://e-commerce-eflyer-1.onrender.com/loginUser', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ email, password })
+                              })
             .then(response => response.json())
             .then(data => {
                 if (data.message === "success") {
