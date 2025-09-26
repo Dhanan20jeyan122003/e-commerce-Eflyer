@@ -54,7 +54,7 @@ button:hover {
 </head>
 <body>
 
-<div id="login-container" class="container">
+<div class="container">
   <h1>Login</h1>
   <form id="login-form">
     <input type="email" id="login-email" placeholder="Enter your email" required>
@@ -65,34 +65,30 @@ button:hover {
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-  const loginForm = document.getElementById('login-form');
+document.getElementById('login-form').addEventListener('submit', function(event) {
+  event.preventDefault();
 
-  loginForm.addEventListener('submit', function (event) {
-    event.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value.trim();
 
-    const email = document.getElementById('login-email').value.trim();
-    const password = document.getElementById('login-password').value.trim();
-
-    // ✅ Use full backend URL
-    fetch('https://e-commerce-eflyer-1.onrender.com/loginUser', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.message === "success") {
-        localStorage.setItem('user', JSON.stringify(data.user));
-        window.location.href = 'dashboard.html';
-      } else {
-        alert(data.message);
-      }
-    })
-    .catch(error => {
-      console.error('❌ Login Error:', error);
-      alert('❌ Login failed. Try again.');
-    });
+  fetch('https://e-commerce-eflyer-1.onrender.com/loginUser', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.message === "success") {
+      localStorage.setItem('user', JSON.stringify(data.user));
+      // ✅ Redirect to dashboard
+      window.location.href = 'dashboard.html';
+    } else {
+      alert(data.message);
+    }
+  })
+  .catch(error => {
+    console.error('❌ Login Error:', error);
+    alert('❌ Login failed. Try again.');
   });
 });
 </script>
