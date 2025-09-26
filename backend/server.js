@@ -25,7 +25,6 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   password: String
 });
-
 const User = mongoose.model('User', userSchema);
 
 // -------------------
@@ -36,19 +35,14 @@ const User = mongoose.model('User', userSchema);
 app.post('/addUser', async (req, res) => {
   try {
     const { name, email, password } = req.body;
-
-    // Check if email already exists
     const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "❌ User already registered with this email!" });
-    }
+    if (existingUser) return res.status(400).json({ message: "❌ User already registered with this email!" });
 
     const newUser = new User({ name, email, password });
     await newUser.save();
 
     console.log("✅ New User Registered:", newUser);
-    res.status(201).json({ message: "User registered successfully!", user: newUser });
-
+    res.status(201).json({ message: "success", user: newUser });
   } catch (error) {
     console.error("❌ Registration Error:", error);
     res.status(500).json({ message: "❌ Registration failed. Try again." });
@@ -59,19 +53,12 @@ app.post('/addUser', async (req, res) => {
 app.post('/loginUser', async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "❌ Email not registered!" });
-    }
-
-    if (user.password !== password) {
-      return res.status(400).json({ message: "❌ Incorrect password!" });
-    }
+    if (!user) return res.status(400).json({ message: "❌ Email not registered!" });
+    if (user.password !== password) return res.status(400).json({ message: "❌ Incorrect password!" });
 
     console.log("✅ User Logged In:", user);
-    res.json({ message: "Login successful!", user });
-
+    res.json({ message: "success", user });
   } catch (error) {
     console.error("❌ Login Error:", error);
     res.status(500).json({ message: "❌ Login failed. Try again." });
@@ -84,6 +71,11 @@ app.post('/loginUser', async (req, res) => {
 
 // Serve all frontend files (outside backend folder)
 app.use(express.static(path.join(__dirname, '../')));
+
+// Serve dashboard.html correctly
+app.get('/dashboard.html', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dashboard.html'));
+});
 
 // For all other routes, serve index.html
 app.get('*', (req, res) => {
