@@ -2,89 +2,95 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
- require('dotenv').config();
+require('dotenv').config();
 
 const app = express();
+
+// Middleware
 app.use(express.json());
 app.use(cors({ origin: "*" }));
 
-
-
+// Environment variables
 const PORT = process.env.PORT || 5001;
+const MONGO_URI = process.env.MONGO_URI;
 
-mongoose.connect(process.env.MONGO_URI)
+// Connect to MongoDB
+mongoose.connect(MONGO_URI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch(err => console.error("❌ MongoDB Connection Error:", err));
 
+// User Schema
 const userSchema = new mongoose.Schema({
-    name: String,
-    email: { type: String, unique: true },
-    password: String
+  name: String,
+  email: { type: String, unique: true },
+  password: String
 });
 
 const User = mongoose.model('User', userSchema);
 
-// ✅ REGISTER User
+// -------------------
+// API ROUTES
+// -------------------
+
+// Register User
 app.post('/addUser', async (req, res) => {
-    try {
-        const { name, email, password } = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-        // Check if email already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: "❌ User already registered with this email!" });
-        }
-
-        // Save plain text password (NO hashing)
-        const newUser = new User({ name, email, password });
-        await newUser.save();
-
-        console.log("✅ New User Registered:", newUser);
-        res.status(201).json({ message: "success", user: newUser });
-
-    } catch (error) {
-        console.error("❌ Registration Error:", error);
-        res.status(500).json({ message: "❌ Registration failed. Try again." });
+    // Check if email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "❌ User already registered with this email!" });
     }
+
+    const newUser = new User({ name, email, password });
+    await newUser.save();
+
+    console.log("✅ New User Registered:", newUser);
+    res.status(201).json({ message: "User registered successfully!", user: newUser });
+
+  } catch (error) {
+    console.error("❌ Registration Error:", error);
+    res.status(500).json({ message: "❌ Registration failed. Try again." });
+  }
 });
 
-// ✅ LOGIN User
+// Login User
 app.post('/loginUser', async (req, res) => {
-    try {
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        // Find user by email
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ message: "❌ Email not registered!" });
-        }
-
-        // Check if passwords match
-        if (user.password !== password) {
-            return res.status(400).json({ message: "❌ Incorrect password!" });
-        }
-
-        console.log("✅ User Logged In:", user);
-        res.json({ message: "success", user });
-
-    } catch (error) {
-        console.error("❌ Login Error:", error);
-        res.status(500).json({ message: "❌ Login failed. Try again." });
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "❌ Email not registered!" });
     }
+
+    if (user.password !== password) {
+      return res.status(400).json({ message: "❌ Incorrect password!" });
+    }
+
+    console.log("✅ User Logged In:", user);
+    res.json({ message: "Login successful!", user });
+
+  } catch (error) {
+    console.error("❌ Login Error:", error);
+    res.status(500).json({ message: "❌ Login failed. Try again." });
+  }
 });
 
-app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+// -------------------
+// SERVE FRONTEND
+// -------------------
 
-
-
-// Serve all frontend files outside the backend folder
+// Serve all frontend files (outside backend folder)
 app.use(express.static(path.join(__dirname, '../')));
 
+// For all other routes, serve index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../index.html'));
 });
 
-
-
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
+});
